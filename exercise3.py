@@ -72,4 +72,3 @@ if __name__ == "__main__":
         sys.exit(str(error))
     except ValueError as error:
         sys.exit(str(error))
-
