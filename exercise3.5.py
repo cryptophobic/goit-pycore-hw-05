@@ -3,6 +3,7 @@ import sys
 from collections import defaultdict
 from typing import Generator
 from prettytable import PrettyTable
+from datetime import datetime
 
 
 def parse_log_line(line: str) -> dict:
@@ -10,8 +11,14 @@ def parse_log_line(line: str) -> dict:
     if m is None:
         raise ValueError(f"Invalid log line: {line}")
 
+    parsed_date = m.group(1)
+
+    # Parsing date to make sure it is valid.
+    # All the exceptions are handled in the outer scope
+    datetime.strptime(parsed_date, "%Y-%m-%d %H:%M:%S")
+
     return {
-        "datetime": m.group(1),
+        "datetime": parsed_date,
         "level": m.group(2),
         "text": m.group(3),
     }

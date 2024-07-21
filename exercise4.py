@@ -8,11 +8,7 @@ def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except KeyError as err:
-            return str(err)
-        except ValueError as err:
-            return str(err)
-        except IndexError as err:
+        except (KeyError, ValueError, IndexError) as err:
             return str(err)
 
     return inner
@@ -132,29 +128,26 @@ def main():
     contacts = {}
     print("Welcome to the assistant bot!")
     while True:
-        try:
-            user_input = input("Enter a command: ")
-            command, *args = parse_input(user_input)
+        user_input = input("Enter a command: ")
+        command, *args = parse_input(user_input)
 
-            if command in ["close", "exit"]:
-                print("Good bye!")
-                break
+        if command in ["close", "exit"]:
+            print("Good bye!")
+            break
 
-            elif command == "hello":
-                print("How can I help you?")
-            elif command == "add":
-                print(add_contact(args, contacts))
-            elif command == "change":
-                print(change_contact(args, contacts))
-            elif command == "phone":
-                print(phone_contact(args, contacts))
-            elif command == "all":
-                print(all_contacts(contacts))
-            else:
-                raise ValueError("Invalid command.\n"
-                                 "Available commands are: close, exit, hello, add, change, phone, all")
-        except ValueError as error:
-            sys.stderr.write(f'Invalid command.: {str(error)}\n')
+        elif command == "hello":
+            print("How can I help you?")
+        elif command == "add":
+            print(add_contact(args, contacts))
+        elif command == "change":
+            print(change_contact(args, contacts))
+        elif command == "phone":
+            print(phone_contact(args, contacts))
+        elif command == "all":
+            print(all_contacts(contacts))
+        else:
+            sys.stderr.write("Invalid command.\n"
+                             "Available commands are: close, exit, hello, add, change, phone, all")
 
 
 if __name__ == "__main__":

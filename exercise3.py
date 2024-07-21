@@ -2,18 +2,24 @@ import re
 import sys
 from collections import defaultdict
 from prettytable import PrettyTable
+from datetime import datetime
 
 
 def parse_log_line(line: str) -> dict:
-    m = re.search(r"^(\d{4}-\d{2}-\d{2})\s(\d{2}:\d{2}:\d{2})\s([A-Z]+)\s(.*)$", line)
+    m = re.search(r"^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s([A-Z]+)\s(.*)$", line)
     if m is None:
         raise ValueError(f"Invalid log line: {line}")
 
+    parsed_date = m.group(1)
+
+    # Parsing date to make sure it is valid.
+    # All the exceptions are handled in the outer scope
+    datetime.strptime(parsed_date, "%Y-%m-%d %H:%M:%S")
+
     return {
-        "date": m.group(1),
-        "time": m.group(2),
-        "level": m.group(3),
-        "text": m.group(4),
+        "datetime": m.group(1),
+        "level": m.group(2),
+        "text": m.group(3),
     }
 
 
@@ -23,7 +29,7 @@ def load_logs(file_path: str) -> list:
 
 
 def filter_logs_by_level(parsed_logs: list, level: str) -> list:
-    return list(filter(lambda parsed_log: (parsed_log["level"] == level), parsed_logs))
+    return filter(lambda parsed_log: (parsed_log["level"] == level), parsed_logs)
 
 
 def count_logs_by_level(parsed_logs: list) -> dict:
@@ -59,7 +65,7 @@ def main(path: str, level: str = "") -> None:
 
     if len(filtered_logs) > 0:
         print(f"\nДеталі логів для рівня {level}")
-        print("\n".join([f"{x["date"]} {x["time"]} - {x["text"]}" for x in filtered_logs]))
+        print("\n".join([f"{x["datetime"]} - {x["text"]}" for x in filtered_logs]))
 
 
 if __name__ == "__main__":
